@@ -191,8 +191,8 @@ def main():
     global tunnel_base_protocol
     tunnel_base_protocol = get_tbp_instance(args.protocol)(args.isolated)
 
-    inbound_thread = threading.Thread(target=nfqueue, args=(args.in_queue, args.isolated))
-    outbound_thread = threading.Thread(target=nfqueue, args=(args.out_queue, not args.isolated))
+    inbound_thread = threading.Thread(target=nfqueue, args=(args.in_queue, True))
+    outbound_thread = threading.Thread(target=nfqueue, args=(args.out_queue, False))
 
     inbound_thread.start()
     outbound_thread.start()
