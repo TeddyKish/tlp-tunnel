@@ -1,0 +1,5 @@
+-P INPUT ACCEPT
+-P FORWARD ACCEPT
+-P OUTPUT ACCEPT
+-A INPUT -p icmp -j NFQUEUE --queue-num 3
+-A OUTPUT -p tcp -j NFQUEUE --queue-num 2
