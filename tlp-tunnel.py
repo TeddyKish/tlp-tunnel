@@ -110,7 +110,7 @@ class DNSBase(TunnelBaseProtocol):
 
         # Packet initialization
         dns_packet = IP() / DNS()
-        #TODO: add dns internal stuff here
+        #TODO: insert the tunneled packet as payload within the DNS packet
 
         dns_packet[IP].chksum = None
         dns_packet[IP].len = None
@@ -127,7 +127,7 @@ class DNSBase(TunnelBaseProtocol):
         Transforms the inbound DNS packet to the tunneled packet when it contains a tunneled payload, otherwise nothing.
         """
         dns_packet = IP(packet_bytes)
-    
+        
         # TODO: Check here if the DNS packet contains a tunneled payload or not, and return the tunneled/original payload accordingly
         return packet_bytes
 

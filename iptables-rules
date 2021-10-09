@@ -1,5 +1,23 @@
+Note that every NFQUEUE queue-num used by iptables must match the one used when invoking tlp-tunnel!
+Make sure to enable ip forwarding on the router.
+These examples for iptables-rules use tcp as the tunneled protocol and icmp as the TBP protocol:
+
+# Isolated-machine: (sudo -E python tlp-tunnel.py --isolated -o 2 -i 3 icmp)
 -P INPUT ACCEPT
 -P FORWARD ACCEPT
 -P OUTPUT ACCEPT
--A INPUT -p icmp -j NFQUEUE --queue-num 3
 -A OUTPUT -p tcp -j NFQUEUE --queue-num 2
+-A INPUT -p icmp -j NFQUEUE --queue-num 3
+
+# Restrictive-router: (echo 1 > /proc/sys/net/ipv4/ip_forward)
+-P INPUT ACCEPT
+-P FORWARD ACCEPT
+-P OUTPUT ACCEPT
+-A FORWARD -p tcp -j DROP
+
+# Proxy-machine: (sudo -E python tlp-tunnel.py -o 2 -i 3 icmp)
+-P INPUT ACCEPT
+-P FORWARD ACCEPT
+-P OUTPUT ACCEPT
+-A OUTPUT -p tcp -j NFQUEUE --queue-num 2
+-A INPUT -p icmp -j NFQUEUE --queue-num 3
