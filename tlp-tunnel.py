@@ -65,6 +65,40 @@ class ICMPBase(TunnelBaseProtocol):
             return icmp_packet[Raw].load
         return original_packet_bytes
 
+class DNSBase(TunnelBaseProtocol):
+    """
+    Represents DNS as the base protocol.
+    """
+    def __init__(self, is_requester):
+        #TODO: add correct functionality for DNS sender-receiver relationship
+        if is_requester:
+            pass
+        else:
+            pass
+
+    def transform_outbound(self, tunneled_packet_bytes):
+        tunneled_packet = IP(tunneled_packet_bytes)
+
+        # Packet initialization
+        dns_packet = IP() / DNS()
+        #TODO: add dns internal stuff here
+
+        dns_packet[IP].chksum = None
+        dns_packet[IP].len = None
+
+        # Use original addressing values
+        dns_packet[IP].src = tunneled_packet[IP].src
+        dns_packet[IP].dst = tunneled_packet[IP].dst
+
+        intermediary_packet = IP(bytes(dns_packet))
+        return raw(intermediary_packet)
+
+    def transform_inbound(self, original_packet_bytes):
+        dns_packet = IP(original_packet_bytes)
+    
+        # TODO: Check here if the DNS packet contains a tunneled payload or not, and return the tunneled/original payload accordingly
+        return original_packet_bytes
+
 # Functions
 def outbound_nfqueue(queue_num):
     print("Started listening for outbound packets...")
