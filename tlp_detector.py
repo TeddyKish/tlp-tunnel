@@ -11,10 +11,10 @@ class TlpDetector:
                               If 'res' is True or the packet couldn't be fixed, 'pkt' will be None
                 * error(str) - if 'res' is False, this will hold the explanation to why the validation failed """
     
-    def validate_packet(self, packet:ICMP) -> bool:
+    def validate_packet(self, packet):
         return self.sort_by_type(packet)
 
-    def sort_by_type(self, packet) -> bool:
+    def sort_by_type(self, packet):
         if (IcmpType.ECHO_REPLY == packet.type):
             return self.validate_echo(packet)
         elif (IcmpType.DEST_UNREACHABLE == packet.type):
@@ -26,121 +26,121 @@ class TlpDetector:
         elif (IcmpType.TIME_EXCEEDED == packet.type):
             return self.validate_time_exceeded(packet)
         
-        error = err_index_to_desc(err.INVALID_TYPE)
+        error = err_index_to_desc(IcmpError.INVALID_TYPE)
         return IcmpResult(False, err=error)
 
-    def validate_echo(self, pkt:ICMP) -> bool:
+    def validate_echo(self, pkt):
         fixed_pkt = duplicate_packet(pkt)
         res = True
         error = ''
 
         if (IcmpCode.ECHO_CODE != pkt.code):
-            error = err_index_to_desc(err.INVALID_CODE)
+            error = err_index_to_desc(IcmpError.INVALID_CODE)
             return IcmpResult(False, err=error)
 
         if (b'' != pkt.unused):
             fixed_pkt.unused = ''
-            error = err_index_to_desc(err.INVALID_DATA)
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = False
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
-    def validate_dest_unreachable(self, pkt) -> bool:
+    def validate_dest_unreachable(self, pkt):
         fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = True
 
         if (IcmpCode.DEST_UNREACHABLE_MAX < pkt.code or
             IcmpCode.DEST_UNREACHABLE_MIN > pkt.code):
-            error = err_index_to_desc(err.INVALID_CODE)
+            error = err_index_to_desc(IcmpError.INVALID_CODE)
             return IcmpResult(False, err=error)
 
         if (b'' != pkt.unused):
             fixed_pkt.unused = ''
-            error = err_index_to_desc(err.INVALID_DATA)
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = False
 
         if (IP_VERSION != pkt[IP].version):    
             fixed_pkt[IP].version = IP_VERSION
-            error = err_index_to_desc(err.INVALID_IP_VERSION)
+            error = err_index_to_desc(IcmpError.INVALID_IP_VERSION)
             res = False
 
         if (MAX_TTL < pkt[IP].ttl):
             fixed_pkt[IP].ttl = MAX_TTL
-            error = err_index_to_desc(err.INVALID_TTL)
+            error = err_index_to_desc(IcmpError.INVALID_TTL)
             res = False
 
         if (ICMP_PROTO != pkt[IP].proto):
             fixed_pkt[IP].proto = ICMP_PROTO
-            error = err_index_to_desc(err.INVALID_PROTOCOL)
+            error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  False
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
-    def validate_redirect(self, pkt) -> bool:
+    def validate_redirect(self, pkt):
         fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = True
 
         if (IcmpCode.REDIRECT_MAX < pkt.code or
             IcmpCode.REDIRECT_MIN > pkt.code):
-            error = err_index_to_desc(err.INVALID_CODE)
+            error = err_index_to_desc(IcmpError.INVALID_CODE)
             return IcmpResult(False, err=error)
 
         if (IP_VERSION != pkt[IP].version):    
             fixed_pkt[IP].version = IP_VERSION
-            error = err_index_to_desc(err.INVALID_IP_VERSION)
+            error = err_index_to_desc(IcmpError.INVALID_IP_VERSION)
             res = False
 
         if (MAX_TTL < pkt[IP].ttl):
             fixed_pkt[IP].ttl = MAX_TTL
-            error = err_index_to_desc(err.INVALID_TTL)
+            error = err_index_to_desc(IcmpError.INVALID_TTL)
             res = False
 
         if (ICMP_PROTO != pkt[IP].proto):
             fixed_pkt[IP].proto = ICMP_PROTO
-            error = err_index_to_desc(err.INVALID_PROTOCOL)
+            error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  False
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
-    def validate_time_exceeded(self, pkt) -> bool:
+    def validate_time_exceeded(self, pkt):
         fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = True
 
         if (IcmpCode.TIME_EXCEEDED_MAX != pkt.code and
             IcmpCode.TIME_EXCEEDED_MIN != pkt.code):
-            error = err_index_to_desc(err.INVALID_CODE)
+            error = err_index_to_desc(IcmpError.INVALID_CODE)
             return IcmpResult(False, error)
 
         if (b'' != pkt.unused):
             fixed_pkt.unused = ''
-            error = err_index_to_desc(err.INVALID_DATA)
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = False
 
         if (IP_VERSION != pkt[IP].version):    
             fixed_pkt[IP].version = IP_VERSION
-            error = err_index_to_desc(err.INVALID_IP_VERSION)
+            error = err_index_to_desc(IcmpError.INVALID_IP_VERSION)
             res = False
 
         if (MAX_TTL < pkt[IP].ttl):
             fixed_pkt[IP].ttl = MAX_TTL
-            error = err_index_to_desc(err.INVALID_TTL)
+            error = err_index_to_desc(IcmpError.INVALID_TTL)
             res = False
 
         if (ICMP_PROTO != pkt[IP].proto):
             fixed_pkt[IP].proto = ICMP_PROTO
-            error = err_index_to_desc(err.INVALID_PROTOCOL)
+            error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  False
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return (res, fixed_pkt, error)
 
-def duplicate_packet(pkt:ICMP) -> ICMP:
+def duplicate_packet(pkt):
     return ICMP(type=pkt.type, code=pkt.code)
 
     

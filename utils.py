@@ -1,23 +1,21 @@
-from enum import IntEnum
 from scapy.all import ICMP
 
-err = IntEnum('Error', [
-    'INVALID_TYPE',
-    'INVALID_CODE',
-    'INVALID_DATA',
-    'INVALID_IP_VERSION',
-    'INVALID_PROTOCOL',
-    'INVALID_TTL',
-])
+class IcmpError():
+    INVALID_TYPE = 0
+    INVALID_CODE = 1
+    INVALID_DATA = 2
+    INVALID_IP_VERSION = 3
+    INVALID_PROTOCOL = 4
+    INVALID_TTL = 5
 
-class IcmpType(IntEnum):
+class IcmpType():
     ECHO_REPLY = 0
     DEST_UNREACHABLE = 3
     REDIRECT = 5
     ECHO_REQUEST = 8
     TIME_EXCEEDED = 11
 
-class IcmpCode(IntEnum):
+class IcmpCode():
     ECHO_CODE = 0
     DEST_UNREACHABLE_MIN = 0
     DEST_UNREACHABLE_MAX = 15
@@ -32,21 +30,21 @@ MAX_TTL = 255
 IP_VERSION = 4
 
 
-def get_checksum(msg: ICMP) -> int:
+def get_checksum(msg):
     del msg.chksum
     msg.show2()
     return msg.chksum
 
 def err_index_to_desc(index):
-    if (err.INVALID_TYPE == index):
+    if (IcmpError.INVALID_TYPE == index):
         return "Invalid ICMP type"
-    elif (err.INVALID_CODE == index):
+    elif (IcmpError.INVALID_CODE == index):
         return "Invalid ICMP code"
-    elif (err.INVALID_DATA == index):
+    elif (IcmpError.INVALID_DATA == index):
         return "Invalid data field"
-    elif (err.INVALID_IP_VERSION == index):
+    elif (IcmpError.INVALID_IP_VERSION == index):
         return "Invalid IP version"
-    elif (err.INVALID_PROTOCOL == index):
+    elif (IcmpError.INVALID_PROTOCOL == index):
         return "Invalid protocol - should be ICMP"
-    elif (err.INVALID_TTL == index):
+    elif (IcmpError.INVALID_TTL == index):
         return "Invalid ttl - larger than max allowed"
