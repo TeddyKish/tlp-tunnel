@@ -46,7 +46,7 @@ class TlpDetector:
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
-    def validate_dest_unreachable(self, pkt: ICMP/IP) -> bool:
+    def validate_dest_unreachable(self, pkt) -> bool:
         fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = True
@@ -79,7 +79,7 @@ class TlpDetector:
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
-    def validate_redirect(self, pkt: ICMP/IP) -> bool:
+    def validate_redirect(self, pkt) -> bool:
         fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = True
@@ -107,7 +107,7 @@ class TlpDetector:
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
-    def validate_time_exceeded(self, pkt: ICMP/IP) -> bool:
+    def validate_time_exceeded(self, pkt) -> bool:
         fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = True
