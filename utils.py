@@ -1,5 +1,10 @@
 from scapy.all import ICMP
 
+class IcmpRes():
+    OK = 0
+    FIX = 1
+    DROP = 2
+
 class IcmpError():
     INVALID_TYPE = 0
     INVALID_CODE = 1
