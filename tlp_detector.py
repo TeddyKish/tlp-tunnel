@@ -1,4 +1,4 @@
-from scapy.all import ICMP, IP
+from scapy.all import ICMP, IP, Raw
 from utils import *
 
 class IcmpResult:
@@ -12,10 +12,10 @@ class TlpDetector:
     """ This class validates ICMP packets and attempts to block ICMP tunneling. 
         Usage - call the 'validate_packet' function and pass the packet to validate as a parameter.
                 Return value is an 'IcmpResult' object, which holds three members:
-                * res(bool) - whether the packet passed validation or not
+                * validation_res(bool) - whether the packet passed validation or not
                 * pkt(ICMP) - a fixed ICMP packet.
                               If 'res' is True or the packet couldn't be fixed, 'pkt' will be None
-                * error(str) - if 'res' is False, this will hold the explanation to why the validation failed """
+                * err(str) - if 'res' is False, this will hold the explanation to why the validation failed """
     
     def validate_packet(self, packet):
         """ The validation entry point """
@@ -55,6 +55,11 @@ class TlpDetector:
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
+        if Raw in pkt:
+            fixed_pkt.load = ''
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
+            res = IcmpRes.FIX
+
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
@@ -90,6 +95,11 @@ class TlpDetector:
             error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  IcmpRes.FIX
 
+        if Raw in pkt:
+            fixed_pkt.load = ''
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
+            res = IcmpRes.FIX
+
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
 
@@ -119,6 +129,11 @@ class TlpDetector:
             fixed_pkt[IP].proto = ICMP_PROTO
             error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  IcmpRes.FIX
+
+        if Raw in pkt:  
+            fixed_pkt.load = ''
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
+            res = IcmpRes.FIX
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)
@@ -154,6 +169,11 @@ class TlpDetector:
             fixed_pkt[IP].proto = ICMP_PROTO
             error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  IcmpRes.FIX
+
+        if Raw in pkt:
+            fixed_pkt.load = ''
+            error = err_index_to_desc(IcmpError.INVALID_DATA)
+            res = IcmpRes.FIX
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return (res, fixed_pkt, error)
