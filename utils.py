@@ -31,7 +31,7 @@ class IcmpCode():
 
 
 # ECHO consts
-DEFAULT_ECHO_PAYLOAD = "abcdefghiklmnopqrstuvwabcdefghi" # Default Ping payload
+DEFAULT_ECHO_PAYLOAD = '!"#$%&\'()*+,-./01234567' # Default Ping payload
 
 # IP inner header consts
 ICMP_PROTO = 1
