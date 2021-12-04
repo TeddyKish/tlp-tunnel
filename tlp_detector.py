@@ -56,9 +56,11 @@ class TlpDetector:
             res = IcmpRes.FIX
 
         if Raw in pkt:
-            fixed_pkt.load = ''
-            error = err_index_to_desc(IcmpError.INVALID_DATA)
-            res = IcmpRes.FIX
+            if (b'' != pkt.payload and
+                DEFAULT_ECHO_PAYLOAD != pkt.payload):
+                fixed_pkt.load = DEFAULT_ECHO_PAYLOAD
+                error = err_index_to_desc(IcmpError.INVALID_DATA)
+                res = IcmpRes.FIX
 
         fixed_pkt.chksum = get_checksum(fixed_pkt)
         return IcmpResult(res, fixed_pkt, error)

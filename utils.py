@@ -30,6 +30,10 @@ class IcmpCode():
     TIME_EXCEEDED_MAX = 1
 
 
+# ECHO consts
+DEFAULT_ECHO_PAYLOAD = "abcdefghiklmnopqrstuvwabcdefghi" # Default Ping payload
+
+# IP inner header consts
 ICMP_PROTO = 1
 MAX_TTL = 255
 IP_VERSION = 4
@@ -37,7 +41,7 @@ IP_VERSION = 4
 
 def get_checksum(msg):
     del msg.chksum
-    msg.show2()
+    msg = msg.__class__(bytes(msg))
     return msg.chksum
 
 def err_index_to_desc(index):
