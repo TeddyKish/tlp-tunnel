@@ -57,7 +57,7 @@ class TlpDetector:
 
         if Raw in pkt:
             if (b'' != pkt.load and
-                check_ends_with_ping(pkt.load)):
+                (not check_ends_with_ping(pkt.load))):
                 fixed_pkt.load = DEFAULT_ECHO_LOAD
                 error = err_index_to_desc(IcmpError.INVALID_DATA)
                 res = IcmpRes.FIX
