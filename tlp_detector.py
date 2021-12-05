@@ -56,9 +56,9 @@ class TlpDetector:
             res = IcmpRes.FIX
 
         if Raw in pkt:
-            if (b'' != pkt.payload and
-                DEFAULT_ECHO_PAYLOAD != pkt.payload):
-                fixed_pkt.load = DEFAULT_ECHO_PAYLOAD
+            if (b'' != pkt.load and
+                check_ends_with_ping(pkt.load)):
+                fixed_pkt.load = DEFAULT_ECHO_LOAD
                 error = err_index_to_desc(IcmpError.INVALID_DATA)
                 res = IcmpRes.FIX
 
@@ -184,4 +184,6 @@ def duplicate_packet(pkt):
     """ Duplicates a given ICMP packet - that will be used as the fixed packet """
     return ICMP(type=pkt.type, code=pkt.code)
 
-    
+def check_ends_with_ping(load):
+    load_suffix = load[-40:]
+    return (ECHO_LOAD_SUFFIX == load_suffix)
