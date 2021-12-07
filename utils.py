@@ -31,8 +31,7 @@ class IcmpCode():
 
 
 # ECHO consts
-ECHO_LOAD_SUFFIX = '\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567' # Default Ping payload
-DEFAULT_ECHO_LOAD = 'ThisIsASafePayoad'
+DEFAULT_ECHO_LOAD = '\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567' # Default Ping payload
 
 # IP inner header consts
 ICMP_PROTO = 1

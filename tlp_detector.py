@@ -42,7 +42,6 @@ class TlpDetector:
     def validate_echo(self, pkt):
         """ Validates ICMP messages of type ECHO REQUEST/ECHO REPLY """
 
-        fixed_pkt = duplicate_packet(pkt)
         res = IcmpRes.OK
         error = ''
 
@@ -51,26 +50,23 @@ class TlpDetector:
             return IcmpResult(IcmpRes.DROP, err=error)
 
         if (b'' != pkt.unused):
-            fixed_pkt.unused = ''
+            pkt.unused = ''
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
         if Raw in pkt:
-            print("here 1")
             if (b'' != pkt.load and
                 (not check_ends_with_ping(pkt.load))):
-                print("here 1")
-                fixed_pkt.load = DEFAULT_ECHO_LOAD
+                pkt.load = DEFAULT_ECHO_LOAD
                 error = err_index_to_desc(IcmpError.INVALID_DATA)
                 res = IcmpRes.FIX
 
-        fixed_pkt.chksum = get_checksum(fixed_pkt)
-        return IcmpResult(res, fixed_pkt, error)
+        pkt.chksum = get_checksum(pkt)
+        return IcmpResult(res, pkt, error)
 
     def validate_dest_unreachable(self, pkt):
         """ Validates ICMP messages of type DESTINATION UNREACHABLE """
 
-        fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = IcmpRes.OK
 
@@ -80,37 +76,36 @@ class TlpDetector:
             return IcmpResult(IcmpRes.DROP, err=error)
 
         if (b'' != pkt.unused):
-            fixed_pkt.unused = ''
+            pkt.unused = ''
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
         if (IP_VERSION != pkt[IP].version):    
-            fixed_pkt[IP].version = IP_VERSION
+            pkt[IP].version = IP_VERSION
             error = err_index_to_desc(IcmpError.INVALID_IP_VERSION)
             res = IcmpRes.FIX
 
         if (MAX_TTL < pkt[IP].ttl):
-            fixed_pkt[IP].ttl = MAX_TTL
+            pkt[IP].ttl = MAX_TTL
             error = err_index_to_desc(IcmpError.INVALID_TTL)
             res = IcmpRes.FIX
 
         if (ICMP_PROTO != pkt[IP].proto):
-            fixed_pkt[IP].proto = ICMP_PROTO
+            pkt[IP].proto = ICMP_PROTO
             error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  IcmpRes.FIX
 
         if Raw in pkt:
-            fixed_pkt.load = ''
+            pkt.load = ''
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
-        fixed_pkt.chksum = get_checksum(fixed_pkt)
-        return IcmpResult(res, fixed_pkt, error)
+        pkt.chksum = get_checksum(pkt)
+        return IcmpResult(res, pkt, error)
 
     def validate_redirect(self, pkt):
         """ Validates ICMP messages of type REDIRECT """
 
-        fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = IcmpRes.OK
 
@@ -120,32 +115,31 @@ class TlpDetector:
             return IcmpResult(IcmpRes.DROP, err=error)
 
         if (IP_VERSION != pkt[IP].version):    
-            fixed_pkt[IP].version = IP_VERSION
+            pkt[IP].version = IP_VERSION
             error = err_index_to_desc(IcmpError.INVALID_IP_VERSION)
             res = IcmpRes.FIX
 
         if (MAX_TTL < pkt[IP].ttl):
-            fixed_pkt[IP].ttl = MAX_TTL
+            pkt[IP].ttl = MAX_TTL
             error = err_index_to_desc(IcmpError.INVALID_TTL)
             res = IcmpRes.FIX
 
         if (ICMP_PROTO != pkt[IP].proto):
-            fixed_pkt[IP].proto = ICMP_PROTO
+            pkt[IP].proto = ICMP_PROTO
             error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  IcmpRes.FIX
 
         if Raw in pkt:  
-            fixed_pkt.load = ''
+            pkt.load = ''
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
-        fixed_pkt.chksum = get_checksum(fixed_pkt)
-        return IcmpResult(res, fixed_pkt, error)
+        pkt.chksum = get_checksum(pkt)
+        return IcmpResult(res, pkt, error)
 
     def validate_time_exceeded(self, pkt):
         """ Validates ICMP messages of type TIME EXCEEDED """
 
-        fixed_pkt = duplicate_packet(pkt)/IP()
         error = ''
         res = IcmpRes.OK
 
@@ -155,37 +149,34 @@ class TlpDetector:
             return IcmpResult(IcmpRes.DROP, error)
 
         if (b'' != pkt.unused):
-            fixed_pkt.unused = ''
+            pkt.unused = ''
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
         if (IP_VERSION != pkt[IP].version):    
-            fixed_pkt[IP].version = IP_VERSION
+            pkt[IP].version = IP_VERSION
             error = err_index_to_desc(IcmpError.INVALID_IP_VERSION)
             res = IcmpRes.FIX
 
         if (MAX_TTL < pkt[IP].ttl):
-            fixed_pkt[IP].ttl = MAX_TTL
+            pkt[IP].ttl = MAX_TTL
             error = err_index_to_desc(IcmpError.INVALID_TTL)
             res = IcmpRes.FIX
 
         if (ICMP_PROTO != pkt[IP].proto):
-            fixed_pkt[IP].proto = ICMP_PROTO
+            pkt[IP].proto = ICMP_PROTO
             error = err_index_to_desc(IcmpError.INVALID_PROTOCOL)
             res =  IcmpRes.FIX
 
         if Raw in pkt:
-            fixed_pkt.load = ''
+            pkt.load = ''
             error = err_index_to_desc(IcmpError.INVALID_DATA)
             res = IcmpRes.FIX
 
-        fixed_pkt.chksum = get_checksum(fixed_pkt)
-        return (res, fixed_pkt, error)
-
-def duplicate_packet(pkt):
-    """ Duplicates a given ICMP packet - that will be used as the fixed packet """
-    return ICMP(type=pkt.type, code=pkt.code)/Raw()
+        pkt.chksum = get_checksum(pkt)
+        return (res, pkt, error)
 
 def check_ends_with_ping(load):
+    """ Checks if the load ends with the standard Ping payload in Linux """
     load_suffix = load[-40:]
-    return (ECHO_LOAD_SUFFIX == load_suffix)
+    return (DEFAULT_ECHO_LOAD == load_suffix)
